@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using System.Collections;
+using AgentManagementAPI.Migrations;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -45,7 +46,7 @@ namespace AgentManagementAPI.Controllers
 
         // PUT: api/Targets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}/pin")]
         public async Task<IActionResult> PutTarget(Guid id, Target target)
         {
             if (id != target.Id)
@@ -87,6 +88,7 @@ namespace AgentManagementAPI.Controllers
             _context.Target.Add(target);
 
             await _context.SaveChangesAsync();
+
 
 
             return StatusCode(StatusCodes.Status201Created, new { id = target.Id}
