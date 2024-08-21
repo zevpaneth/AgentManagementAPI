@@ -9,6 +9,7 @@ using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using System.Collections;
 using AgentManagementAPI.Migrations;
+using AgentManagementAPI.Classes;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -40,25 +41,29 @@ namespace AgentManagementAPI.Controllers
             {
                 return NotFound();
             }
-
+            
             return target;
         }
 
         // PUT: api/Targets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}/pin")]
-        public async Task<IActionResult> PutTarget(Guid id, Target target)
+        public async Task<IActionResult> PutTarget(Guid id, Location location)
         {
-            if (id != target.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(target).State = EntityState.Modified;
-
             try
-            {
+
+            { 
+                Target target = await _context.Target.FindAsync(id);
+                target.Location = location;
+                
+                Console.WriteLine(target.ToString());
+                target.Location = location;
+                Console.WriteLine(target.Location.ToString());
+                _context.Target.Update(target);
+                Console.WriteLine($"the target is updated");
                 await _context.SaveChangesAsync();
+                return StatusCode(200, _context.Target.ToArray());
+                    
             }
             catch (DbUpdateConcurrencyException)
             {
