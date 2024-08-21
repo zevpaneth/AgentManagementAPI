@@ -1,14 +1,15 @@
-﻿using AgentManagementAPI.Enums;
-using System.Drawing;
+﻿using AgentManagementAPI.Classes;
+using AgentManagementAPI.Enums;
+
 
 namespace AgentManagementAPI.Models
 {
     public class Agent
     {
-        public string Image = string.Empty; // => Link to the picture
-        public string Nickname = string.Empty;
-        public Point Location = new Point();
-        public AgentStatus AgentStatus;
+        public string Image { get; set; } // => Link to the picture
+        public string Nickname {  get; set; }
+        public Location Location { get; set; }
+        public AgentStatus AgentStatus { get; set; }
         
     }
 }

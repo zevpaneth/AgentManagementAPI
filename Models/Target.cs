@@ -1,5 +1,5 @@
-﻿using AgentManagementAPI.Enums;
-using NetTopologySuite.Geometries;
+﻿using AgentManagementAPI.Classes;
+using AgentManagementAPI.Enums;
 
 namespace AgentManagementAPI.Models
 {
@@ -8,7 +8,7 @@ namespace AgentManagementAPI.Models
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Rank { get; set; } = string.Empty;
-        public Location Location { get; set; }
+        public Location? Location { get; set; }
         public TargetStatus TargetStatus { get; set; }
     }
 }
