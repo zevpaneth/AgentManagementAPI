@@ -1,13 +1,14 @@
 ﻿using AgentManagementAPI.Enums;
-using System.Drawing;
+using NetTopologySuite.Geometries;
 
 namespace AgentManagementAPI.Models
 {
     public class Target
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Rank { get; set; } = string.Empty;
-        public Point Location { get; set; } = new Point();
+        public Location Location { get; set; }
         public TargetStatus TargetStatus { get; set; }
     }
 }

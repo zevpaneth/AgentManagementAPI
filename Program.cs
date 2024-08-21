@@ -1,3 +1,7 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using AgentManagementAPI.Controllers;
+using AgentManagementAPI.Data;
 
 namespace AgentManagementAPI
 {
@@ -6,6 +10,10 @@ namespace AgentManagementAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<AgentManagementAPIContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("AgentManagementAPIContext") ?? throw new InvalidOperationException("Connection string 'AgentManagementAPIContext' not found.")));
+            
+            
 
             // Add services to the container.
 
@@ -29,6 +37,8 @@ namespace AgentManagementAPI
 
 
             app.MapControllers();
+
+
 
             app.Run();
         }
