@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
+using System.Collections;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -76,14 +77,25 @@ namespace AgentManagementAPI.Controllers
         // POST: api/Targets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<Target>> PostTarget(Target target)
         {
+            target.Id = Guid.NewGuid();
+            target.TargetStatus = Enums.TargetStatus.Alive;
+
             _context.Target.Add(target);
+
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTarget", new { id = target.Id }, target);
-        }
 
+            return StatusCode(StatusCodes.Status201Created, new { id = target.Id}
+            );
+
+        }
+        
+        
+        
         // DELETE: api/Targets/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTarget(Guid id)

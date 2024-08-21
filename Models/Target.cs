@@ -9,6 +9,6 @@ namespace AgentManagementAPI.Models
         public string Name { get; set; } = string.Empty;
         public string Rank { get; set; } = string.Empty;
         public Location? Location { get; set; }
-        public TargetStatus TargetStatus { get; set; }
+        public TargetStatus TargetStatus { get; set; } 
     }
 }
