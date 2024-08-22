@@ -11,4 +11,5 @@ namespace AgentManagementAPI.Classes
         [Range(0, 1000)]
         public int y { get; set; }
     }
+    
 }

@@ -11,4 +11,6 @@ namespace AgentManagementAPI.Models
         public Location Location { get; set; }
         public TargetStatus TargetStatus { get; set; } 
     }
+
+    
 }

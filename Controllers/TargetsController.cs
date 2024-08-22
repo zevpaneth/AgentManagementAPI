@@ -10,6 +10,7 @@ using AgentManagementAPI.Models;
 using System.Collections;
 using AgentManagementAPI.Migrations;
 using AgentManagementAPI.Classes;
+using AgentManagementAPI.Services;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -35,9 +36,9 @@ namespace AgentManagementAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Target>> GetTarget(Guid id)
         {
-            // tp include the updated location
+            // to include the updated location from all
             var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
-            // tp find our taget
+            // to find our target
             var target = targets.FirstOrDefault(t => t.Id == id);
 
             if (target == null)
@@ -78,6 +79,43 @@ namespace AgentManagementAPI.Controllers
 
             return NoContent();
         }
+
+
+        [HttpPut("{id}/move")]
+        public async Task<IActionResult> MoveTarget(Guid id, Direction direction)
+        {
+            try
+
+            {
+                // to include the updated location from all
+                var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
+                // to find our target
+                var target = targets.FirstOrDefault(t => t.Id == id);
+
+                target  = MoveService.MoveServiceFunction(target, direction);
+                
+                _context.Target.Update(target);
+
+                await _context.SaveChangesAsync();
+                return StatusCode(200, _context.Target.ToArray());
+
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TargetExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            
+
+            return NoContent();
+        }
+
 
         // POST: api/Targets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
