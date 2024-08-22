@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgentManagementAPI.Migrations
 {
     [DbContext(typeof(AgentManagementAPIContext))]
-    [Migration("20240822105319_Initial")]
+    [Migration("20240822122257_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -46,9 +46,11 @@ namespace AgentManagementAPI.Migrations
 
             modelBuilder.Entity("AgentManagementAPI.Models.Agent", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AgentStatus")
                         .HasColumnType("int");
@@ -56,11 +58,11 @@ namespace AgentManagementAPI.Migrations
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PhotoUrl")
+                    b.Property<string>("nickname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("name")
+                    b.Property<string>("photoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -73,9 +75,11 @@ namespace AgentManagementAPI.Migrations
 
             modelBuilder.Entity("AgentManagementAPI.Models.Target", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");

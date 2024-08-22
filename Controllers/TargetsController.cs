@@ -29,15 +29,15 @@ namespace AgentManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Target>>> GetTarget()
         {
-            return await _context.Target.Include(T => T.Position)?.ToArrayAsync();
+            return await _context.Target.Include(T => T.Location)?.ToArrayAsync();
         }
 
         // GET: api/Targets/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Target>> GetTarget(Guid id)
+        public async Task<ActionResult<Target>> GetTarget(int id)
         {
             // to include the updated location from all
-            var targets = await _context.Target.Include(t => t.Position)?.ToArrayAsync();
+            var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
             // to find our target
             var target = targets.FirstOrDefault(t => t.Id == id);
 
@@ -52,7 +52,7 @@ namespace AgentManagementAPI.Controllers
         // PUT: api/Targets/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}/pin")]
-        public async Task<IActionResult> PutTarget(Guid id, Location location)
+        public async Task<IActionResult> PutTarget(int id, Location location)
         {
             try
 
@@ -82,13 +82,13 @@ namespace AgentManagementAPI.Controllers
 
 
         [HttpPut("{id}/move")]
-        public async Task<IActionResult> MoveTarget(Guid id, Direction direction)
+        public async Task<IActionResult> MoveTarget(int id, Direction direction)
         {
             try
 
             {
                 // to include the updated location from all
-                var targets = await _context.Target.Include(t => t.Position)?.ToArrayAsync();
+                var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
                 // to find our target
                 var target = targets.FirstOrDefault(t => t.Id == id);
 
@@ -120,20 +120,20 @@ namespace AgentManagementAPI.Controllers
         // POST: api/Targets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        
+        
         public async Task<ActionResult<Target>> PostTarget(Target target)
         {
-            target.Id = Guid.NewGuid();
+
             target.TargetStatus = Enums.TargetStatus.Alive;
 
-            _context.Target.Add(target);
+            var result = await _context.Target.AddAsync(target);
 
             await _context.SaveChangesAsync();
 
 
 
-            return StatusCode(StatusCodes.Status201Created, new { id = target.Id}
+            return StatusCode(StatusCodes.Status201Created, new { id = result.Entity.Id}
             );
 
         }
@@ -142,7 +142,7 @@ namespace AgentManagementAPI.Controllers
         
         // DELETE: api/Targets/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTarget(Guid id)
+        public async Task<IActionResult> DeleteTarget(int id)
         {
             var target = await _context.Target.FindAsync(id);
             if (target == null)
@@ -156,7 +156,7 @@ namespace AgentManagementAPI.Controllers
             return NoContent();
         }
 
-        private bool TargetExists(Guid id)
+        private bool TargetExists(int id)
         {
             return _context.Target.Any(e => e.Id == id);
         }

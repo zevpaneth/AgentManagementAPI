@@ -30,7 +30,7 @@ namespace AgentManagementAPI.Controllers
 
         // GET: api/Agents/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Agent>> GetAgent(Guid id)
+        public async Task<ActionResult<Agent>> GetAgent(int id)
         {
             var agent = await _context.Agent.FindAsync(id);
 
@@ -45,7 +45,7 @@ namespace AgentManagementAPI.Controllers
         // PUT: api/Agents/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAgent(Guid id, Agent agent)
+        public async Task<IActionResult> PutAgent(int id, Agent agent)
         {
             if (id != agent.Id)
             {
@@ -86,7 +86,7 @@ namespace AgentManagementAPI.Controllers
 
         // DELETE: api/Agents/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAgent(Guid id)
+        public async Task<IActionResult> DeleteAgent(int id)
         {
             var agent = await _context.Agent.FindAsync(id);
             if (agent == null)
@@ -100,7 +100,7 @@ namespace AgentManagementAPI.Controllers
             return NoContent();
         }
 
-        private bool AgentExists(Guid id)
+        private bool AgentExists(int id)
         {
             return _context.Agent.Any(e => e.Id == id);
         }

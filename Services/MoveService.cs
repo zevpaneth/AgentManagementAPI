@@ -9,6 +9,7 @@ namespace AgentManagementAPI.Services
 
         public static Target MoveServiceFunction(Target target, Direction direction)
         {
+            
             string di = direction.direction;
             if (di.Contains("n"))
             {

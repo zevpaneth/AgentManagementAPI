@@ -11,7 +11,7 @@ namespace AgentManagementAPI.Models
         //{"nickname":"Agent010","photoUrl":"https://randomuser.me/api/portraits/women/10.jpg"}
 
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         public string photoUrl { get; set; } // => Link to the picture
 
