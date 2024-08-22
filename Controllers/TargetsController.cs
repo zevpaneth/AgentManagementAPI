@@ -28,20 +28,23 @@ namespace AgentManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Target>>> GetTarget()
         {
-            return await _context.Target.ToListAsync();
+            return await _context.Target.Include(T => T.Location)?.ToArrayAsync();
         }
 
         // GET: api/Targets/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Target>> GetTarget(Guid id)
         {
-            var target = await _context.Target.FindAsync(id);
+            // tp include the updated location
+            var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
+            // tp find our taget
+            var target = targets.FirstOrDefault(t => t.Id == id);
 
             if (target == null)
             {
                 return NotFound();
             }
-            
+
             return target;
         }
 
@@ -55,12 +58,8 @@ namespace AgentManagementAPI.Controllers
             { 
                 Target target = await _context.Target.FindAsync(id);
                 target.Location = location;
-                
-                Console.WriteLine(target.ToString());
-                target.Location = location;
-                Console.WriteLine(target.Location.ToString());
                 _context.Target.Update(target);
-                Console.WriteLine($"the target is updated");
+
                 await _context.SaveChangesAsync();
                 return StatusCode(200, _context.Target.ToArray());
                     
