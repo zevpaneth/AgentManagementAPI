@@ -11,7 +11,7 @@ namespace AgentManagementAPI
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<AgentManagementAPIContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")).UseValidationCheckConstraints());
             
             
 

@@ -11,6 +11,7 @@ using System.Collections;
 
 using AgentManagementAPI.Classes;
 using AgentManagementAPI.Services;
+using Microsoft.OpenApi.Validations;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -88,16 +89,26 @@ namespace AgentManagementAPI.Controllers
 
             {
                 // to include the updated location from all
-                var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
+                var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
                 // to find our target
-                var target = targets.FirstOrDefault(t => t.Id == id);
+                Target targetFromDb = targets.FirstOrDefault(t => t.Id == id);
+                int currentX = targetFromDb.Location.x;
+                int currentY = targetFromDb.Location.y;
 
-                target  = MoveService.MoveServiceFunction(target, direction);
+                Target targetToDb;
+                targetToDb = MoveService.MoveServiceFunction(targetFromDb, direction);
+                _context.Target.Update(targetToDb);
                 
-                _context.Target.Update(target);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return StatusCode(200, _context.Target.ToArray());
+                }
+                catch (DbUpdateException)
+                {
 
-                await _context.SaveChangesAsync();
-                return StatusCode(200, _context.Target.ToArray());
+                    return StatusCode(400, new { Eror = "Can't be moved outside the matrix" , currentX, currentY});
+                }
 
             }
             catch (DbUpdateConcurrencyException)

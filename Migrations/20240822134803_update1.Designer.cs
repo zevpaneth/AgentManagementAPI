@@ -4,6 +4,7 @@ using AgentManagementAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AgentManagementAPI.Migrations
 {
     [DbContext(typeof(AgentManagementAPIContext))]
-    partial class AgentManagementAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20240822134803_update1")]
+    partial class update1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,12 +41,7 @@ namespace AgentManagementAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Location", t =>
-                        {
-                            t.HasCheckConstraint("CK_Location_x_Range", "[x] BETWEEN 0 AND 1000");
-
-                            t.HasCheckConstraint("CK_Location_y_Range", "[y] BETWEEN 0 AND 1000");
-                        });
+                    b.ToTable("Location");
                 });
 
             modelBuilder.Entity("AgentManagementAPI.Models.Agent", b =>
