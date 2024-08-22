@@ -73,9 +73,9 @@ namespace AgentManagementAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Agents
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+    // POST: Agents
+    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    [HttpPost]
         public async Task<ActionResult<Agent>> PostAgent(Agent agent)
         {
             _context.Agent.Add(agent);

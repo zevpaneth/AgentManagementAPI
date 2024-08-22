@@ -53,11 +53,11 @@ namespace AgentManagementAPI.Migrations
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PhotoUrl")
+                    b.Property<string>("photoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("name")
+                    b.Property<string>("nickname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

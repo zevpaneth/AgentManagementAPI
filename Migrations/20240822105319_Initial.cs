@@ -30,8 +30,8 @@ namespace AgentManagementAPI.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    photoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    nickname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: true),
                     AgentStatus = table.Column<int>(type: "int", nullable: false)
                 },
