@@ -41,6 +41,33 @@ namespace AgentManagementAPI.Migrations
                     b.ToTable("Location");
                 });
 
+            modelBuilder.Entity("AgentManagementAPI.Models.Agent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AgentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("Agent");
+                });
+
             modelBuilder.Entity("AgentManagementAPI.Models.Target", b =>
                 {
                     b.Property<Guid>("Id")
@@ -54,7 +81,11 @@ namespace AgentManagementAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Rank")
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -66,6 +97,15 @@ namespace AgentManagementAPI.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("Target");
+                });
+
+            modelBuilder.Entity("AgentManagementAPI.Models.Agent", b =>
+                {
+                    b.HasOne("AgentManagementAPI.Classes.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("AgentManagementAPI.Models.Target", b =>

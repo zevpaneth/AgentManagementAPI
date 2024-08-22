@@ -26,12 +26,33 @@ namespace AgentManagementAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Agent",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LocationId = table.Column<int>(type: "int", nullable: true),
+                    AgentStatus = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Agent", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Agent_Location_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Location",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Target",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Rank = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Position = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: true),
                     TargetStatus = table.Column<int>(type: "int", nullable: false)
                 },
@@ -46,6 +67,11 @@ namespace AgentManagementAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Agent_LocationId",
+                table: "Agent",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Target_LocationId",
                 table: "Target",
                 column: "LocationId");
@@ -54,6 +80,9 @@ namespace AgentManagementAPI.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Agent");
+
             migrationBuilder.DropTable(
                 name: "Target");
 

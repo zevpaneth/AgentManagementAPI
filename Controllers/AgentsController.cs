@@ -10,13 +10,13 @@ using AgentManagementAPI.Models;
 
 namespace AgentManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class AgentsController : ControllerBase
+    public class agentsController : ControllerBase
     {
         private readonly AgentManagementAPIContext _context;
 
-        public AgentsController(AgentManagementAPIContext context)
+        public agentsController(AgentManagementAPIContext context)
         {
             _context = context;
         }

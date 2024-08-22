@@ -8,19 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using System.Collections;
-using AgentManagementAPI.Migrations;
+
 using AgentManagementAPI.Classes;
 using AgentManagementAPI.Services;
 
 namespace AgentManagementAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    public class TargetsController : ControllerBase
+    public class targetsController : ControllerBase
     {
         private readonly AgentManagementAPIContext _context;
 
-        public TargetsController(AgentManagementAPIContext context)
+        public targetsController(AgentManagementAPIContext context)
         {
             _context = context;
         }
@@ -29,7 +29,7 @@ namespace AgentManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Target>>> GetTarget()
         {
-            return await _context.Target.Include(T => T.Location)?.ToArrayAsync();
+            return await _context.Target.Include(T => T.Position)?.ToArrayAsync();
         }
 
         // GET: api/Targets/5
@@ -37,7 +37,7 @@ namespace AgentManagementAPI.Controllers
         public async Task<ActionResult<Target>> GetTarget(Guid id)
         {
             // to include the updated location from all
-            var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
+            var targets = await _context.Target.Include(t => t.Position)?.ToArrayAsync();
             // to find our target
             var target = targets.FirstOrDefault(t => t.Id == id);
 
@@ -88,7 +88,7 @@ namespace AgentManagementAPI.Controllers
 
             {
                 // to include the updated location from all
-                var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
+                var targets = await _context.Target.Include(t => t.Position)?.ToArrayAsync();
                 // to find our target
                 var target = targets.FirstOrDefault(t => t.Id == id);
 

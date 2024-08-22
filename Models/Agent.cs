@@ -11,9 +11,9 @@ namespace AgentManagementAPI.Models
         [Key]
         public Guid Id { get; set; }
 
-        public string Image { get; set; } // => Link to the picture
+        public string PhotoUrl { get; set; } // => Link to the picture
 
-        public string Nickname {  get; set; }
+        public string name {  get; set; }
 
         public Location? Location { get; set; }
 
