@@ -10,6 +10,8 @@ using AgentManagementAPI.Models;
 using AgentManagementAPI.Classes;
 using AgentManagementAPI.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Mono.TextTemplating;
+using Location = AgentManagementAPI.Classes.Location;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -118,8 +120,9 @@ namespace AgentManagementAPI.Controllers
                 agent.Location = location;
                 _context.Agent.Update(agent);
 
-                await _context.SaveChangesAsync();
 
+                await _context.SaveChangesAsync();
+                
                 await _agentMissionsCreator.CreateMissions (agent);
 
 
@@ -152,10 +155,15 @@ namespace AgentManagementAPI.Controllers
             try
 
             {
+                
                 // to include the updated location from all
                 var agents = await _context.Agent.Include(a => a.Location).ToArrayAsync();
                 // to find our agent
                 Agent agentFromDb = agents.FirstOrDefault(a => a.Id == id);
+                if (agentFromDb.AgentStatus == Enums.AgentStatus.Active )
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new { Eror = "The agent cannot be moved in action" });
+                }
                 int currentX = agentFromDb.Location.x;
                 int currentY = agentFromDb.Location.y;
 
@@ -168,6 +176,8 @@ namespace AgentManagementAPI.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
+                    
+                    await _agentMissionsCreator.CreateMissions(agentToDb);
                     return StatusCode(200, _context.Target.ToArray());
                 }
                 catch (DbUpdateException)

@@ -35,9 +35,7 @@ namespace AgentManagementAPI.Services
                     _context.Mission.Add(mission);
                 }
             }
-            var mapping = _context.Model.FindEntityType(typeof(Mission));
-            string schema = mapping.GetSchema();
-            string table = mapping.GetTableName();
+
 
             _context.SaveChanges();
             await _context.SaveChangesAsync();

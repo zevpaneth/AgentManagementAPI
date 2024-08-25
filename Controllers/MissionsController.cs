@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
+using NetTopologySuite.Operation.Distance3D;
+using AgentManagementAPI.Services;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -43,7 +45,7 @@ namespace AgentManagementAPI.Controllers
             return mission;
         }
 
-        // PUT: Missions/5
+        // PUT: Missions/5/ to activizing a mission
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMission(int id, Mission mission)
@@ -52,8 +54,36 @@ namespace AgentManagementAPI.Controllers
             {
                 return BadRequest();
             }
+            var agentId = mission.AgentId;
 
+            // to include the updated location from all
+            var agents = await _context.Agent.Include(a => a.Location).ToArrayAsync();
+            // to find our agent
+            Agent agent = agents.FirstOrDefault(a => a.Id == agentId);
+            // to include the updated location from all
+            var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
+            // to find our target
+            var targetId = mission.TargetId;
+            Target target = targets.FirstOrDefault(t => t.Id == targetId);
+            var distance = BaseMissionsCreator.CheckDistanceFunction(agent.Location, target.Location);
 
+            if (distance > 200)
+            {
+                _context.Mission.Remove(mission);
+                await _context.SaveChangesAsync();
+                return StatusCode(StatusCodes.Status404NotFound, new { eror = "They are not within 200 kilometers" });
+            }
+            
+            if (distance <= 200)
+            {
+                mission.MissionStatus = Enums.MissionStatus.assigned;
+                _context.Update(mission);
+                agent.AgentStatus = Enums.AgentStatus.Active;
+                _context.Update(agent);
+                var missionsToDelete = await _context.FindAsync(agentId)
+                await _context.SaveChangesAsync();
+
+            }
             try
             {
                 
