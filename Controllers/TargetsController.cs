@@ -95,10 +95,13 @@ namespace AgentManagementAPI.Controllers
                 int currentX = targetFromDb.Location.x;
                 int currentY = targetFromDb.Location.y;
 
-                Target targetToDb;
-                targetToDb = MoveService.MoveServiceFunction(targetFromDb, direction);
+                // use the base model for using the move service function
+                BaseModel targetToMove = MoveService.MoveServiceFunction(targetFromDb, direction);
+                Target targetToDb = targetFromDb;
+                // update the location 
+                targetToDb.Location = targetToMove.Location;
                 _context.Target.Update(targetToDb);
-                
+
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -107,7 +110,7 @@ namespace AgentManagementAPI.Controllers
                 catch (DbUpdateException)
                 {
 
-                    return StatusCode(400, new { Eror = "Can't be moved outside the matrix" , currentX, currentY});
+                    return StatusCode(400, new { Eror = "Can't be moved outside the matrix", currentX, currentY });
                 }
 
             }
@@ -122,7 +125,7 @@ namespace AgentManagementAPI.Controllers
                     throw;
                 }
             }
-            
+
 
             return NoContent();
         }

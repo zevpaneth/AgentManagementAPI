@@ -6,18 +6,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AgentManagementAPI.Models
 {
-    public class Agent
+    public class Agent : BaseModel
     {
-        //{"nickname":"Agent010","photoUrl":"https://randomuser.me/api/portraits/women/10.jpg"}
-
-        [Key]
-        public int Id { get; set; }
-
-        public string photoUrl { get; set; } // => Link to the picture
-
         public string nickname {  get; set; }
-
-        public Location? Location { get; set; }
 
         public AgentStatus AgentStatus { get; set; }
         

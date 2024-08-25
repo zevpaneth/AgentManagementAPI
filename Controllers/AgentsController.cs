@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using AgentManagementAPI.Classes;
+using AgentManagementAPI.Services;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -133,6 +135,53 @@ namespace AgentManagementAPI.Controllers
         private bool AgentExists(int id)
         {
             return _context.Agent.Any(e => e.Id == id);
+        }
+
+        [HttpPut("{id}/move")]
+        public async Task<IActionResult> MoveTarget(int id, Direction direction)
+        {
+            try
+
+            {
+                // to include the updated location from all
+                var agents = await _context.Agent.Include(a => a.Location).ToArrayAsync();
+                // to find our agent
+                Agent agentFromDb = agents.FirstOrDefault(a => a.Id == id);
+                int currentX = agentFromDb.Location.x;
+                int currentY = agentFromDb.Location.y;
+
+                BaseModel agentToMove = MoveService.MoveServiceFunction(agentFromDb, direction);
+                Agent agentToDb = agentFromDb;
+                agentToDb.Location = agentToMove.Location;
+
+                _context.Agent.Update(agentToDb);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return StatusCode(200, _context.Target.ToArray());
+                }
+                catch (DbUpdateException)
+                {
+
+                    return StatusCode(400, new { Eror = "Can't be moved outside the matrix", currentX, currentY });
+                }
+
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AgentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+
+            return NoContent();
         }
     }
 }

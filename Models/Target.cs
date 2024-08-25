@@ -5,14 +5,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AgentManagementAPI.Models
 {
-    public class Target
+    public class Target : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Position { get; set; }
-        public string PhotoUrl { get; set; }
-        public Location? Location { get; set; }
         public TargetStatus TargetStatus { get; set; } 
     }
 
