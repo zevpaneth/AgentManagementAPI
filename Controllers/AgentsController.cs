@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
+using AgentManagementAPI.Classes;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -81,7 +82,7 @@ namespace AgentManagementAPI.Controllers
             _context.Agent.Add(agent);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAgent", new { id = agent.Id }, agent);
+            return CreatedAtAction("GetAgent", new { id = agent.Id });
         }
 
         // DELETE: api/Agents/5
@@ -96,6 +97,35 @@ namespace AgentManagementAPI.Controllers
 
             _context.Agent.Remove(agent);
             await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/pin")]
+        public async Task<IActionResult> PutAgent(int id, Location location)
+        {
+            try
+
+            {
+                Agent agent = await _context.Agent.FindAsync(id);
+                agent.Location = location;
+                _context.Agent.Update(agent);
+
+                await _context.SaveChangesAsync();
+                return StatusCode(200, _context.Agent.ToArray());
+
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AgentExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
