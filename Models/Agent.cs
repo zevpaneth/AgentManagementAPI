@@ -11,6 +11,8 @@ namespace AgentManagementAPI.Models
         public string nickname {  get; set; }
 
         public AgentStatus AgentStatus { get; set; }
+
+
         
     }
 }

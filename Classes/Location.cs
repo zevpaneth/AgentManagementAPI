@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AgentManagementAPI.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace AgentManagementAPI.Classes
 {
@@ -10,6 +11,6 @@ namespace AgentManagementAPI.Classes
         public int x { get; set; }
         [Range(0, 1000)]
         public int y { get; set; }
+
     }
-    
 }

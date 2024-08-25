@@ -18,10 +18,14 @@ namespace AgentManagementAPI.Controllers
     public class agentsController : ControllerBase
     {
         private readonly AgentManagementAPIContext _context;
+        private readonly AgentMissionsCreator _agentMissionsCreator;
 
-        public agentsController(AgentManagementAPIContext context)
+
+        public agentsController(AgentManagementAPIContext context, AgentMissionsCreator agentMissionsCreator)
         {
             _context = context;
+            _agentMissionsCreator = agentMissionsCreator;
+
         }
 
         // GET: api/Agents
@@ -110,10 +114,15 @@ namespace AgentManagementAPI.Controllers
 
             {
                 Agent agent = await _context.Agent.FindAsync(id);
+                
                 agent.Location = location;
                 _context.Agent.Update(agent);
 
                 await _context.SaveChangesAsync();
+
+                await _agentMissionsCreator.CreateMissions (agent);
+
+
                 return StatusCode(200, _context.Agent.ToArray());
 
             }

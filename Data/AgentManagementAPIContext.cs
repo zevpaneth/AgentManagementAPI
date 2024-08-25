@@ -17,5 +17,6 @@ namespace AgentManagementAPI.Data
         public DbSet<AgentManagementAPI.Models.Target> Target { get; set; } = default!;
         public DbSet<AgentManagementAPI.Models.Agent> Agent { get; set; } = default!;
         public DbSet<AgentManagementAPI.Classes.Location> Location { get; set; }
+        public DbSet<AgentManagementAPI.Models.Mission> Mission { get; set; } = default!;
     }
 }

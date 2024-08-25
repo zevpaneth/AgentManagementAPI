@@ -20,17 +20,19 @@ namespace AgentManagementAPI.Controllers
     public class targetsController : ControllerBase
     {
         private readonly AgentManagementAPIContext _context;
+        private TargetMissionsCreator _targetMissionsCreator;
 
-        public targetsController(AgentManagementAPIContext context)
+        public targetsController(AgentManagementAPIContext context, TargetMissionsCreator targetMissionsCreator)
         {
             _context = context;
+            _targetMissionsCreator = targetMissionsCreator;
         }
 
         // GET: api/Targets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Target>>> GetTarget()
         {
-            return await _context.Target.Include(T => T.Location)?.ToArrayAsync();
+            return await _context.Target.Include(T => T.Location).ToArrayAsync();
         }
 
         // GET: api/Targets/5
@@ -38,7 +40,7 @@ namespace AgentManagementAPI.Controllers
         public async Task<ActionResult<Target>> GetTarget(int id)
         {
             // to include the updated location from all
-            var targets = await _context.Target.Include(t => t.Location)?.ToArrayAsync();
+            var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
             // to find our target
             var target = targets.FirstOrDefault(t => t.Id == id);
 
@@ -63,7 +65,9 @@ namespace AgentManagementAPI.Controllers
                 _context.Target.Update(target);
 
                 await _context.SaveChangesAsync();
-                return StatusCode(200, _context.Target.ToArray());
+                await _targetMissionsCreator.CreateMissions(target);
+                var retObj = await _context.Target.ToArrayAsync();
+                return StatusCode(200, retObj);
                     
             }
             catch (DbUpdateConcurrencyException)
@@ -92,12 +96,14 @@ namespace AgentManagementAPI.Controllers
                 var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
                 // to find our target
                 Target targetFromDb = targets.FirstOrDefault(t => t.Id == id);
-                int currentX = targetFromDb.Location.x;
-                int currentY = targetFromDb.Location.y;
+                // save the curent location in a case that didnt change
+                int x = targetFromDb.Location.x;
+                int y = targetFromDb.Location.y;
 
                 // use the base model for using the move service function
                 BaseModel targetToMove = MoveService.MoveServiceFunction(targetFromDb, direction);
                 Target targetToDb = targetFromDb;
+
                 // update the location 
                 targetToDb.Location = targetToMove.Location;
                 _context.Target.Update(targetToDb);
@@ -105,12 +111,16 @@ namespace AgentManagementAPI.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return StatusCode(200, _context.Target.ToArray());
+                    await _targetMissionsCreator.CreateMissions(targetToDb);
+
+                    var retObj = await _context.Target.ToArrayAsync();
+
+                    return StatusCode(200, retObj);
                 }
                 catch (DbUpdateException)
                 {
 
-                    return StatusCode(400, new { Eror = "Can't be moved outside the matrix", currentX, currentY });
+                    return StatusCode(400, new { Eror = "Can't be moved outside the matrix", x, y });
                 }
 
             }
@@ -134,8 +144,6 @@ namespace AgentManagementAPI.Controllers
         // POST: api/Targets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        
-        
         public async Task<ActionResult<Target>> PostTarget(Target target)
         {
 

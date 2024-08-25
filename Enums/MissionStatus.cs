@@ -2,8 +2,8 @@
 {
     public enum MissionStatus
     {
-        Proposal,
-        Started_Mission,
+        Advise_mission,
+        assigned,
         Ended
 
     }

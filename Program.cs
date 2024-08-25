@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using AgentManagementAPI.Controllers;
 using AgentManagementAPI.Data;
+using AgentManagementAPI.Middlewares.Global;
+using AgentManagementAPI.Services;
 
 namespace AgentManagementAPI
 {
@@ -12,15 +14,18 @@ namespace AgentManagementAPI
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<AgentManagementAPIContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")).UseValidationCheckConstraints());
-            
-            
+
+
 
             // Add services to the container.
-
+            builder.Services.AddScoped<TargetMissionsCreator>();
+            builder.Services.AddScoped<AgentMissionsCreator>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+     
+
 
             var app = builder.Build();
 
@@ -34,6 +39,10 @@ namespace AgentManagementAPI
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<GlobalLoggingMiddleware>();
+
+
 
 
             app.MapControllers();

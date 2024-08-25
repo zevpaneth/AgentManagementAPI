@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using AgentManagementAPI.Enums;
+using System.ComponentModel;
 
 namespace AgentManagementAPI.Models
 {
@@ -12,11 +13,11 @@ namespace AgentManagementAPI.Models
         [Key]
         public int Id { get; set; }
 
-        [ForeignKey("Agent")]
-        public Guid AgentId { get; set; }
+        [ForeignKey("Agent"), TypeConverter("int")]
+        public int AgentId { get; set; }
         
-        [ForeignKey("Target")]
-        public Guid TargetId { get; set; }
+        [ForeignKey("Target"), TypeConverter("int")]
+        public int TargetId { get; set; }
 
         public double? Timer { get; set; }
 
