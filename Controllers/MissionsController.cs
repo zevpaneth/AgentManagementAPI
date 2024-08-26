@@ -124,7 +124,7 @@ namespace AgentManagementAPI.Controllers
         public async Task<ActionResult> UpdateMissions()
         {
             _updateMission.MissionsUpdate();
-                
+            return Ok();
         }
 
         

@@ -103,12 +103,6 @@ namespace AgentManagementAPI.Services
                 _context.Agent.Update(agentToMove);
                 await _context.SaveChangesAsync();
             }
-
-
-
-            //כאן יתבצע עדכון של הזמן
-            //הנותר לחיסול בבסיס
-            //הנתונים.
         }
     }
 }

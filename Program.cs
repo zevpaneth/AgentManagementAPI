@@ -20,8 +20,9 @@ namespace AgentManagementAPI
             // Add services to the container.
             builder.Services.AddScoped<TargetMissionsCreator>();
             builder.Services.AddScoped<AgentMissionsCreator>();
-            builder.Services.AddScoped<UpdateMission>();
+            builder.Services.AddScoped<StatusUpdateMission>();
             builder.Services.AddScoped<ModelSearchor>();
+            builder.Services.AddScoped<MoveService>();
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

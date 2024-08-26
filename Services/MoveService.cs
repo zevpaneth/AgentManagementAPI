@@ -1,4 +1,5 @@
 ﻿using AgentManagementAPI.Classes;
+using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,9 +9,12 @@ namespace AgentManagementAPI.Services
 {
     public class MoveService
     {
+        private readonly AgentManagementAPIContext _context;
         private readonly ModelSearchor _modelSearchor;
-        public MoveService(ModelSearchor modelSearchor) {
+        public MoveService(ModelSearchor modelSearchor, AgentManagementAPIContext context)
+        {
             _modelSearchor = modelSearchor;
+            _context = context;
         }
 
         public static BaseModel MoveFunction(BaseModel model, Direction direction)
@@ -42,6 +46,8 @@ namespace AgentManagementAPI.Services
             int agentId = mission.AgentId;
             int targetId = mission.TargetId;
 
+            Agent agent = await _modelSearchor.AgentHunter(agentId);
+
             Location agentLocation = await _modelSearchor.AgentLocation(agentId);
             Location targetLocation = await _modelSearchor.TargetLocation(targetId);
 
@@ -52,6 +58,20 @@ namespace AgentManagementAPI.Services
 
             string direction = directionClass.direction;
 
+
+
+            if (directionX == 0 && directionY == 0)
+            {
+
+                Target target = await _modelSearchor.TargetHunter(targetId);
+                target.TargetStatus = Enums.TargetStatus.Eliminated;
+                _context.Target.Update(target);
+                agent.AgentStatus = Enums.AgentStatus.Dormant;
+                _context.Agent.Update(agent);
+                await _context.SaveChangesAsync();
+                return agent;
+
+            }
 
             if (directionY > 0)
             {
@@ -70,7 +90,6 @@ namespace AgentManagementAPI.Services
                 direction += "w";
             }
 
-            Agent agent = await _modelSearchor.AgentHunter(agentId);
             BaseModel baseModel = MoveFunction(agent, directionClass);
             agent.Location = baseModel.Location;
             return agent;
