@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using System.Collections;
-
 using AgentManagementAPI.Classes;
 using AgentManagementAPI.Services;
 using Microsoft.OpenApi.Validations;

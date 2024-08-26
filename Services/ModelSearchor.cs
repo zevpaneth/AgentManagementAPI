@@ -2,8 +2,15 @@
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Data.Entity;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgentManagementAPI.Services
 {
@@ -19,10 +26,11 @@ namespace AgentManagementAPI.Services
 
         public async Task<List<Agent>> AgentsWithLocation()
         {
-            return await _context.Agent.Include(a => a.Location).ToListAsync();
+            var result  = await _context.Agent.Include(a => a.Location).ToListAsync();
+            return result;
         }
 
-        public async Task<Agent?> AgentHunter(int id)
+        public async Task<Agent> AgentHunter(int id)
         {
             List<Agent> agents = await AgentsWithLocation();
             Agent agent = agents.FirstOrDefault(a => a.Id == id);

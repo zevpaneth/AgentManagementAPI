@@ -9,9 +9,7 @@ using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using AgentManagementAPI.Classes;
 using AgentManagementAPI.Services;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Mono.TextTemplating;
-using Location = AgentManagementAPI.Classes.Location;
+
 
 namespace AgentManagementAPI.Controllers
 {
@@ -34,9 +32,10 @@ namespace AgentManagementAPI.Controllers
 
         // GET: api/Agents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Agent>>> GetAgent()
+        public async Task<IActionResult> GetAgent()
         {
-            return await _modelSearchor.AgentsWithLocation();
+            var result = await _modelSearchor.AgentsWithLocation();
+            return StatusCode(StatusCodes.Status200OK, new { result = result });
         }
 
         // GET: api/Agents/5
@@ -52,40 +51,9 @@ namespace AgentManagementAPI.Controllers
             return agent;
         }
 
-        // PUT: api/Agents/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAgent(int id, Agent agent)
-        {
-            if (id != agent.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(agent).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AgentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
     // POST: Agents
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPost]
+        [HttpPost]
         public async Task<ActionResult<Agent>> PostAgent(Agent agent)
         {
             _context.Agent.Add(agent);
@@ -130,7 +98,7 @@ namespace AgentManagementAPI.Controllers
                 return StatusCode(200, _context.Agent.ToArray());
 
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Data.Entity.Infrastructure.DbUpdateConcurrencyException)
             {
                 if (!AgentExists(id))
                 {
@@ -177,14 +145,14 @@ namespace AgentManagementAPI.Controllers
                     await _agentMissionsCreator.CreateMissions(agentToDb);
                     return StatusCode(200, _context.Target.ToArray());
                 }
-                catch (DbUpdateException)
+                catch (System.Data.Entity.Infrastructure.DbUpdateException)
                 {
 
                     return StatusCode(400, new { Eror = "Can't be moved outside the matrix", currentX, currentY });
                 }
 
             }
-            catch (DbUpdateConcurrencyException)
+            catch (System.Data.Entity.Infrastructure.DbUpdateConcurrencyException)
             {
                 if (!AgentExists(id))
                 {
