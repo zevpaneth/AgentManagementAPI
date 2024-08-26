@@ -21,12 +21,14 @@ namespace AgentManagementAPI.Controllers
     {
         private readonly AgentManagementAPIContext _context;
         private readonly AgentMissionsCreator _agentMissionsCreator;
+        private readonly ModelSearchor _modelSearchor;
 
 
-        public agentsController(AgentManagementAPIContext context, AgentMissionsCreator agentMissionsCreator)
+        public agentsController(AgentManagementAPIContext context, AgentMissionsCreator agentMissionsCreator, ModelSearchor modelSearchor)
         {
             _context = context;
             _agentMissionsCreator = agentMissionsCreator;
+            _modelSearchor = modelSearchor;
 
         }
 
@@ -34,15 +36,14 @@ namespace AgentManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Agent>>> GetAgent()
         {
-            return await _context.Agent.ToListAsync();
+            return await _modelSearchor.AgentsWithLocation();
         }
 
         // GET: api/Agents/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Agent>> GetAgent(int id)
         {
-            var agent = await _context.Agent.FindAsync(id);
-
+            var agent = await _modelSearchor.AgentHunter(id);
             if (agent == null)
             {
                 return NotFound();
@@ -155,11 +156,7 @@ namespace AgentManagementAPI.Controllers
             try
 
             {
-                
-                // to include the updated location from all
-                var agents = await _context.Agent.Include(a => a.Location).ToArrayAsync();
-                // to find our agent
-                Agent agentFromDb = agents.FirstOrDefault(a => a.Id == id);
+                Agent agentFromDb = await _modelSearchor.AgentHunter(id);
                 if (agentFromDb.AgentStatus == Enums.AgentStatus.Active )
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, new { Eror = "The agent cannot be moved in action" });

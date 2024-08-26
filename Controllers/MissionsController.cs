@@ -9,6 +9,7 @@ using AgentManagementAPI.Data;
 using AgentManagementAPI.Models;
 using NetTopologySuite.Operation.Distance3D;
 using AgentManagementAPI.Services;
+using AgentManagementAPI.Classes;
 
 namespace AgentManagementAPI.Controllers
 {
@@ -17,11 +18,15 @@ namespace AgentManagementAPI.Controllers
     public class MissionsController : ControllerBase
     {
         private readonly AgentManagementAPIContext _context;
+        private readonly ModelSearchor _modelSearchor;
+        private readonly UpdateMission _updateMission;
 
 
-        public MissionsController(AgentManagementAPIContext context)
+        public MissionsController(AgentManagementAPIContext context, ModelSearchor modelSearchor, UpdateMission updateMission)
         {
             _context = context;
+            _modelSearchor = modelSearchor;
+            _updateMission = updateMission;
         }
 
         // GET: api/Missions
@@ -48,51 +53,33 @@ namespace AgentManagementAPI.Controllers
         // PUT: Missions/5/ to activizing a mission
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMission(int id, Mission mission)
+        public async Task<IActionResult> PutMission(int missionId, Mission mission)
         {
-            if (id != mission.Id)
+            if (missionId != mission.Id)
             {
                 return BadRequest();
             }
-            var agentId = mission.AgentId;
 
-            // to include the updated location from all
-            var agents = await _context.Agent.Include(a => a.Location).ToArrayAsync();
-            // to find our agent
-            Agent agent = agents.FirstOrDefault(a => a.Id == agentId);
-            // to include the updated location from all
-            var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
-            // to find our target
-            var targetId = mission.TargetId;
-            Target target = targets.FirstOrDefault(t => t.Id == targetId);
-            var distance = BaseMissionsCreator.CheckDistanceFunction(agent.Location, target.Location);
+            bool result = await _updateMission.UpdateMissions(missionId);
 
-            if (distance > 200)
+            if (!result)
             {
-                _context.Mission.Remove(mission);
-                await _context.SaveChangesAsync();
                 return StatusCode(StatusCodes.Status404NotFound, new { eror = "They are not within 200 kilometers" });
             }
-            
-            if (distance <= 200)
-            {
-                mission.MissionStatus = Enums.MissionStatus.assigned;
-                _context.Update(mission);
-                agent.AgentStatus = Enums.AgentStatus.Active;
-                _context.Update(agent);
-                var missionsToDelete = await _context.FindAsync(agentId)
-                await _context.SaveChangesAsync();
 
+            if (result)
+            {
+                return StatusCode(StatusCodes.Status201Created);
             }
             try
             {
-                
+
 
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MissionExists(id))
+                if (!MissionExists(missionId))
                 {
                     return NotFound();
                 }

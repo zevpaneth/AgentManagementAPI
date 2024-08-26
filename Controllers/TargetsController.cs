@@ -21,18 +21,22 @@ namespace AgentManagementAPI.Controllers
     {
         private readonly AgentManagementAPIContext _context;
         private TargetMissionsCreator _targetMissionsCreator;
+        private readonly ModelSearchor _modelSearchor;
 
-        public targetsController(AgentManagementAPIContext context, TargetMissionsCreator targetMissionsCreator)
+        public targetsController(AgentManagementAPIContext context, TargetMissionsCreator targetMissionsCreator, ModelSearchor modelSearchor)
         {
             _context = context;
             _targetMissionsCreator = targetMissionsCreator;
+            _modelSearchor = modelSearchor;
+
+
         }
 
         // GET: api/Targets
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Target>>> GetTarget()
         {
-            return await _context.Target.Include(T => T.Location).ToArrayAsync();
+            return await _modelSearchor.TargetsWithLocation();
         }
 
         // GET: api/Targets/5
@@ -40,7 +44,7 @@ namespace AgentManagementAPI.Controllers
         public async Task<ActionResult<Target>> GetTarget(int id)
         {
             // to include the updated location from all
-            var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
+            var targets = await _modelSearchor.TargetsWithLocation();
             // to find our target
             var target = targets.FirstOrDefault(t => t.Id == id);
 
@@ -59,7 +63,7 @@ namespace AgentManagementAPI.Controllers
         {
             try
 
-            { 
+            {
                 Target target = await _context.Target.FindAsync(id);
                 target.Location = location;
                 _context.Target.Update(target);
@@ -92,10 +96,8 @@ namespace AgentManagementAPI.Controllers
             try
 
             {
-                // to include the updated location from all
-                var targets = await _context.Target.Include(t => t.Location).ToArrayAsync();
-                // to find our target
-                Target targetFromDb = targets.FirstOrDefault(t => t.Id == id);
+                Target targetFromDb = await _modelSearchor.TargetHunter(id);
+
                 // save the curent location in a case that didnt change
                 int x = targetFromDb.Location.x;
                 int y = targetFromDb.Location.y;

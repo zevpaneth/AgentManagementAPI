@@ -1,13 +1,10 @@
 ﻿using AgentManagementAPI.Classes;
-using AgentManagementAPI.Data;
 
 namespace AgentManagementAPI.Services
 {
-    public class BaseMissionsCreator
+    public class Distance
     {
-
-
-        public static double? CheckDistanceFunction(Location location1, Location location2)
+        public static double? CheckDistance(Location location1, Location location2)
         {
             if (location1 != null && location2 != null)
             {
@@ -19,6 +16,12 @@ namespace AgentManagementAPI.Services
                 return distance;
             }
             return null;
+        }
+
+        public static bool CloseDistance(Location location1, Location location2)
+        {
+            var distance = CheckDistance(location1, location2);
+            return distance <= 200;
         }
     }
 }

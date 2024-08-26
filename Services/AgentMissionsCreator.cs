@@ -5,26 +5,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AgentManagementAPI.Services
 {
-    public class AgentMissionsCreator : BaseMissionsCreator
+    public class AgentMissionsCreator 
     {
         private readonly AgentManagementAPIContext _context;
+        private readonly ModelSearchor _modelSearchor;
 
 
-        public AgentMissionsCreator(AgentManagementAPIContext context)
+        public AgentMissionsCreator(AgentManagementAPIContext context, ModelSearchor modelSearchor)
         {
             _context = context;
-
+            _modelSearchor = modelSearchor;
         }
 
 
         public async Task CreateMissions(Agent agent)
         {
-            var targets = await _context.Target.Include(t => t.Location).ToListAsync();
+            var targets = await _modelSearchor.TargetsWithLocation();
             for (int i = 0; i < targets.Count; i++)
             {
                 var target = targets[i];
-                var distance = CheckDistanceFunction(agent.Location, target.Location);
-                if (distance <= 200)
+                bool closeDistance = Distance.CloseDistance(agent.Location, target.Location);
+                if (closeDistance)
                 {
                     Mission mission = new Mission
                     {
@@ -35,9 +36,6 @@ namespace AgentManagementAPI.Services
                     _context.Mission.Add(mission);
                 }
             }
-
-
-            _context.SaveChanges();
             await _context.SaveChangesAsync();
 
         }

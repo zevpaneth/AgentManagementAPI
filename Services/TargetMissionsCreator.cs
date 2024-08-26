@@ -6,19 +6,20 @@ using AgentManagementAPI.Classes;
 
 namespace AgentManagementAPI.Services
 {
-    public class TargetMissionsCreator : BaseMissionsCreator
+    public class TargetMissionsCreator
     {
         private readonly AgentManagementAPIContext _context;
+        private readonly ModelSearchor _modelSearchor;
 
 
-        public TargetMissionsCreator(AgentManagementAPIContext context)
+        public TargetMissionsCreator(AgentManagementAPIContext context, ModelSearchor modelSearchor)
         {
             _context = context;
-
+            _modelSearchor = modelSearchor;
         }
         public async Task CreateMissions(Target target)
         {
-            var agents = await _context.Agent.Include(a => a.Location).ToListAsync();
+            var agents = await _modelSearchor.AgentsWithLocation();
             if (agents.Count > 0)
             {
 
@@ -26,8 +27,8 @@ namespace AgentManagementAPI.Services
                 for (int i = 0; i < agents.Count; i++)
                 {
                     var agent = agents[i];
-                    var distance = CheckDistanceFunction(target.Location, agent.Location);
-                    if (distance <= 200)
+                    bool closeDistabce = Distance.CloseDistance(target.Location, agent.Location);
+                    if (closeDistabce)
                     {
                         Mission mission = new Mission
                         {
@@ -40,8 +41,6 @@ namespace AgentManagementAPI.Services
 
                     }
                 }
-                string connection = _context.Database.GetConnectionString();
-                _context.SaveChanges();
                 await _context.SaveChangesAsync();
             }
         }
