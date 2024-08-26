@@ -1,31 +1,26 @@
-﻿using AgentManagementAPI.Services;
-using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Text.Json;
 
 
-namespace AgentManagementAPI.Middlewares.Global
+namespace AgentManagementAPI.Middlewares.Global;
+
+public class GlobalLoggingMiddleware
 {
-    public class GlobalLoggingMiddleware
+
+    private readonly RequestDelegate _next;
+
+    public GlobalLoggingMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-        
-        public GlobalLoggingMiddleware(RequestDelegate next)
-        {
-            this._next = next;
-        }
-
-
-        public async Task InvokeAsync(HttpContext context)
-        {
-            var request = context.Request;
-            Console.WriteLine($"Got Request to server: method = {request.Method}, path =  {request.Path}." +
-                $"\nFrom IP => {request.HttpContext.Connection.RemoteIpAddress}");
-            
-            await this._next(context);
-            
-        }
+        _next = next;
     }
-        
 
-
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var request = context.Request;
+        Console.WriteLine($"Got Request to server: {request.Method} {request.Path}\n" +
+                          $"From IP: {request.HttpContext.Connection.RemoteIpAddress}");
+        await _next(context);
+    }
 }
+
+

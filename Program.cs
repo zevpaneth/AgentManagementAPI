@@ -43,11 +43,17 @@ namespace AgentManagementAPI
 
             app.UseAuthorization();
 
+            // app.UseHttpsRedirection();
             app.UseMiddleware<GlobalLoggingMiddleware>();
 
-
-
-
+            app.UseWhen(
+                context =>
+                context.Request.Path.StartsWithSegments("/Login"),
+                appBuilder =>
+                {
+                    //appBuilder.UseMiddleware<JwtValidationMiddleware>();
+                    appBuilder.UseMiddleware<GlobalLoggingMiddleware>();
+                });
             app.MapControllers();
 
 

@@ -93,7 +93,7 @@ namespace AgentManagementAPI.Services
             }
         }
 
-        public async void MissionsUpdate()
+        public async Task MissionsUpdate()
         {
             var missions = await _context.Mission.ToListAsync();
             var missionsToUpdate = missions.Where<Mission>(m => m.MissionStatus == Enums.MissionStatus.assigned);
