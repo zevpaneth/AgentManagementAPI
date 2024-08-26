@@ -1,5 +1,7 @@
 ﻿using AgentManagementAPI.Services;
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace AgentManagementAPI.Middlewares.Global
 {

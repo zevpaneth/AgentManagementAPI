@@ -52,7 +52,7 @@ namespace AgentManagementAPI.Controllers
         }
 
     // POST: Agents
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    
         [HttpPost]
         public async Task<ActionResult<Agent>> PostAgent(Agent agent)
         {
@@ -132,7 +132,7 @@ namespace AgentManagementAPI.Controllers
                 int currentX = agentFromDb.Location.x;
                 int currentY = agentFromDb.Location.y;
 
-                BaseModel agentToMove = MoveService.MoveServiceFunction(agentFromDb, direction);
+                BaseModel agentToMove = MoveService.MoveFunction(agentFromDb, direction);
                 Agent agentToDb = agentFromDb;
                 agentToDb.Location = agentToMove.Location;
 

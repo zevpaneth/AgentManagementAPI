@@ -19,10 +19,10 @@ namespace AgentManagementAPI.Controllers
     {
         private readonly AgentManagementAPIContext _context;
         private readonly ModelSearchor _modelSearchor;
-        private readonly UpdateMission _updateMission;
+        private readonly StatusUpdateMission _updateMission;
 
 
-        public MissionsController(AgentManagementAPIContext context, ModelSearchor modelSearchor, UpdateMission updateMission)
+        public MissionsController(AgentManagementAPIContext context, ModelSearchor modelSearchor, StatusUpdateMission updateMission )
         {
             _context = context;
             _modelSearchor = modelSearchor;
@@ -52,15 +52,11 @@ namespace AgentManagementAPI.Controllers
 
         // PUT: Missions/5/ to activizing a mission
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMission(int missionId, Mission mission)
+        [HttpPut("{missionId}")]
+        public async Task<IActionResult> PutMission(int missionId)
         {
-            if (missionId != mission.Id)
-            {
-                return BadRequest();
-            }
 
-            bool result = await _updateMission.UpdateMissions(missionId);
+            bool result = await _updateMission.StatusUpdateMissions(missionId);
 
             if (!result)
             {
@@ -123,5 +119,14 @@ namespace AgentManagementAPI.Controllers
         {
             return _context.Mission.Any(e => e.Id == id);
         }
+
+        [HttpPost("Update")]
+        public async Task<ActionResult> UpdateMissions()
+        {
+            _updateMission.MissionsUpdate();
+                
+        }
+
+        
     }
 }

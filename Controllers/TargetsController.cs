@@ -102,7 +102,7 @@ namespace AgentManagementAPI.Controllers
                 int y = targetFromDb.Location.y;
 
                 // use the base model for using the move service function
-                BaseModel targetToMove = MoveService.MoveServiceFunction(targetFromDb, direction);
+                BaseModel targetToMove = MoveService.MoveFunction(targetFromDb, direction);
                 Target targetToDb = targetFromDb;
 
                 // update the location 

@@ -8,8 +8,12 @@ namespace AgentManagementAPI.Services
 {
     public class MoveService
     {
+        private readonly ModelSearchor _modelSearchor;
+        public MoveService(ModelSearchor modelSearchor) {
+            _modelSearchor = modelSearchor;
+        }
 
-        public static BaseModel MoveServiceFunction(BaseModel model, Direction direction)
+        public static BaseModel MoveFunction(BaseModel model, Direction direction)
         {
             
             string di = direction.direction;
@@ -33,7 +37,47 @@ namespace AgentManagementAPI.Services
 
         }
 
-        
-        
+        public async Task<Agent> MovementToDirection(Mission mission)
+        {
+            int agentId = mission.AgentId;
+            int targetId = mission.TargetId;
+
+            Location agentLocation = await _modelSearchor.AgentLocation(agentId);
+            Location targetLocation = await _modelSearchor.TargetLocation(targetId);
+
+            var directionY = agentLocation.y - targetLocation.y;
+            var directionX = agentLocation.x - targetLocation.x;
+
+            Direction directionClass = new Direction();
+
+            string direction = directionClass.direction;
+
+
+            if (directionY > 0)
+            {
+                direction += "n";
+            }
+            else if (directionX > 0)
+            {
+                direction += "s";
+            }
+            if (directionX > 0)
+            {
+                direction += "e";
+            }
+            else if (directionX < 0)
+            {
+                direction += "w";
+            }
+
+            Agent agent = await _modelSearchor.AgentHunter(agentId);
+            BaseModel baseModel = MoveFunction(agent, directionClass);
+            agent.Location = baseModel.Location;
+            return agent;
+
+        }
+
+
+
     }
 }
