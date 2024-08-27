@@ -4,6 +4,7 @@ using AgentManagementAPI.Controllers;
 using AgentManagementAPI.Data;
 using AgentManagementAPI.Middlewares.Global;
 using AgentManagementAPI.Services;
+using System.Net.Http;
 
 namespace AgentManagementAPI
 {
@@ -27,7 +28,8 @@ namespace AgentManagementAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-     
+            builder.Services.AddSingleton<HttpClient>();
+
 
 
             var app = builder.Build();
@@ -43,7 +45,7 @@ namespace AgentManagementAPI
 
             app.UseAuthorization();
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseMiddleware<GlobalLoggingMiddleware>();
 
             app.UseWhen(
